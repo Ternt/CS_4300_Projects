@@ -8,13 +8,6 @@ body {
   overflow-y: hidden;
 }
 
-* {
-  font-family: 'Space Grotesk', sans-serif;
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
-
 a {
   text-decoration: none;
   color: white;
@@ -52,57 +45,16 @@ a:hover {
   position: fixed;
 }
 
-.page-header {
-  width: 100vw;
-  height: var(--page-header-size);
-  background: rgba(0, 0, 0, 0.6);
-  padding: 1rem;
-  z-index: 997;
-}
-
-.page-main {
-  min-height: calc(100vh);
-  width: calc(100vw);
-}
-
-.page-content {
-  position: relative;
-  z-index: 1;
-}
-
-.page-project-title {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.8);
-  padding: 0.2rem 1rem;
-  color: white;
-  font-family: 'Space Mono', monospace;
-  font-size: 2rem;
-  pointer-events: none;
-  z-index: 3;
+* {
+  font-family: 'Space Grotesk', sans-serif;
+  padding: 0;
+  margin: 0;
   box-sizing: border-box;
-}
-
-.page-notice {
-  z-index: 3;
-  top: var(--page-header-size);
-  color: rgba(255, 0, 0, 1.0);
-  font-family: 'Space Mono', monospace;
-  background: rgba(255, 0, 0, 0.3);
 }
 
 .content {
   margin: auto;
   max-width: 700px;
-}
-
-.github-link {
-  float: right;
-}
-
-.project-canvas {
-  position: absolute;
 }
 
 .ui-container {
@@ -116,11 +68,6 @@ a:hover {
 
 .ui-container * {
   pointer-events: auto;
-}
-
-.ui-toolbar {
-  display: flex;
-  flex-direction: column;
 }
 
 .ui-element {

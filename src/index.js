@@ -1,7 +1,6 @@
 import './style.css';
 
 const projectLinks = [
-  { name: 'Project 1',     url: '/proj1/index.html'     }, 
   { name: 'Project 2',     url: '/proj2/index.html'     },
   { name: 'Project 3',     url: '/proj3/index.html'     },
   { name: 'Project 4',     url: '/proj4/index.html'     },
