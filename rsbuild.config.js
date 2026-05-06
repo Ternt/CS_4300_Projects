@@ -18,4 +18,9 @@ export default defineConfig({
     ],
     historyApiFallback: false,
   },
+  output: {
+    distPath: {
+      root: 'public', // confirm this matches
+    },
+  },
 });
