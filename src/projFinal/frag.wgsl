@@ -1,4 +1,5 @@
-@group(0) @binding(0) var<uniform> resolution     : vec2f;
+@group(0) @binding(0) var<uniform> resolution : vec2f;
+@group(0) @binding(0) var<uniform> matrix     : mat4f;
 
 @fragment
 fn fs(@builtin(position) pos: vec4f) -> @location(0) vec4f {
