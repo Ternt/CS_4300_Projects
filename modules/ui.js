@@ -1,4 +1,3 @@
-
 export default class UI {
   init() {
     // Initialize and append root UI container
