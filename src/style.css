@@ -1,72 +1,256 @@
+/* ── Variables ─────────────────────────────────────────── */
 :root {
   --page-header-size: 50px;
   --page-layout-size: 1rem;
+  --card-w: 560px;
+  --card-h: 315px; /* 16:9 */
 }
 
-.space-mono-regular {
-  font-family: "Space Mono", monospace;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.space-mono-bold {
-  font-family: "Space Mono", monospace;
-  font-weight: 700;
-  font-style: normal;
-}
-
-.space-mono-regular-italic {
-  font-family: "Space Mono", monospace;
-  font-weight: 400;
-  font-style: italic;
-}
-
-.space-mono-bold-italic {
-  font-family: "Space Mono", monospace;
-  font-weight: 700;
-  font-style: italic;
-}
-
+/* ── Reset ──────────────────────────────────────────────── */
 * {
-  font-family: 'Space Grotesk', sans-serif;
-  text-decoration: none;
+  font-family: 'Space Mono', monospace;
   padding: 0;
   margin: 0;
-  box-sizing: content-box;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 
 body {
+  background: #000;
+  color: white;
   overflow-x: hidden;
 }
 
+/* ── Space Mono helpers (keep parity with project pages) ── */
+.space-mono-regular        { font-family: "Space Mono", monospace; font-weight: 500; font-style: normal; }
+.space-mono-bold           { font-family: "Space Mono", monospace; font-weight: 700; font-style: normal; }
+.space-mono-regular-italic { font-family: "Space Mono", monospace; font-weight: 500; font-style: italic; }
+.space-mono-bold-italic    { font-family: "Space Mono", monospace; font-weight: 700; font-style: italic; }
+
+/* ── Header ─────────────────────────────────────────────── */
 .page-header {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
   height: var(--page-header-size);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 0 1rem;
+  z-index: 997;
+  line-height: var(--page-header-size);
+  overflow: hidden;
 }
 
+.header-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.5rem;
+  color: white;
+  letter-spacing: 0.05em;
+}
+
+.page-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.5rem;
+  color: white;
+  letter-spacing: 0.05em;
+  float: right;
+}
+
+/* ── Main ────────────────────────────────────────────────── */
 .page-main {
-  min-height: calc(100vh - var(--page-layout-size));
-  width: calc(100vw - var(--page-layout-size));
+  padding-top: var(--page-header-size);
+  min-height: 100vh;
+  width: 100vw;
 }
 
-.content {
-  margin: auto;
-  max-width: 700px;
+/* Vertical stack, centered */
+.page-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 4rem 0 6rem;
+  position: relative;
 }
 
-.project-title {
-  height: 1rem;
+/* ── Project row ─────────────────────────────────────────── */
+.project-row {
+  position: relative;
+  width: var(--card-w);
+  margin-bottom: 5rem;
 }
 
+/* ── Side info card ──────────────────────────────────────── */
+.project-label {
+  position: absolute;
+  left: calc(var(--card-w) + 2rem);
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 220px;
+  pointer-events: none;
+
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.project-label.visible {
+  opacity: 1;
+}
+
+.project-label-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+  margin-bottom: 0.5rem;
+}
+
+.project-label-description {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: rgba(180, 180, 180, 1);
+  line-height: 1.6;
+  white-space: normal;
+}
+
+/* ── Cinema screen card ──────────────────────────────────── */
 .project-card {
-  width: 400px;
-  height: 400px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  position: relative;
+  width: var(--card-w);
+  height: var(--card-h);
+  cursor: pointer;
+  display: block;
 }
 
-.project-card-thumbnail {
+/* Glow — driven by --glow-color set from thumbnail */
+.card-glow {
+  position: absolute;
+  inset: -20px;
+  z-index: 0;
+  border-radius: 2px;
+  background: var(--glow-color, rgba(255, 255, 255, 0.08));
+  filter: blur(32px);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+
+.project-card:hover .card-glow {
+  opacity: 1;
+}
+
+/* Screen area */
+.card-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+
+/* Letterbox bars — top and bottom black bars like a cinema frame */
+.card-screen::before,
+.card-screen::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 10%;
+  background: #000;
+  z-index: 3;
+  pointer-events: none;
+}
+.card-screen::before { top: 0; }
+.card-screen::after  { bottom: 0; }
+
+/* Thumbnail images */
+.card-thumbnail,
+.card-thumbnail-gif {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: calc(100% - 1rem);
-  border: solid black 2px;
-  box-sizing: border-box;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.card-thumbnail-gif {
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.project-card:hover .card-thumbnail-gif {
+  opacity: 1;
+}
+
+/* Placeholder when no thumbnail */
+.card-placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(
+    -45deg,
+    #0a0a0a 0px,
+    #0a0a0a 4px,
+    #111 4px,
+    #111 8px
+  );
+}
+
+.card-placeholder-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
+  color: rgba(160, 160, 160, 1.0);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Scanline overlay on hover */
+.card-scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.07) 3px,
+    rgba(0, 0, 0, 0.07) 4px
+  );
+}
+
+.project-card:hover .card-scanlines {
+  opacity: 1;
+}
+
+/* Subtle border */
+.card-screen-border {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  border: 1px solid rgba(80, 80, 80, 1);
+  transition: border-color 0.3s ease;
+}
+
+.project-card:hover .card-screen-border {
+  border-color: rgba(150, 150, 150, 1);
 }

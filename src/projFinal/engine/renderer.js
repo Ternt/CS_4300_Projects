@@ -459,4 +459,62 @@ export default class Renderer {
     for (const child of node.children) Renderer.collectMeshNodes(child, list);
     return list;
   }
+
+  // ── Capture / Record ──────────────────────────────────────
+
+  /**
+   * Convert a frames-per-second value to a millisecond interval.
+   * @param {number} fps
+   * @returns {number}
+   */
+  static FpsToMS(fps) {
+    return 1000 / fps;
+  }
+
+  /**
+   * Capture the current front buffer as a PNG data URL.
+   * Copies through an offscreen 2D canvas to handle WebGPU's opaque alpha.
+   * @returns {Promise<string>} PNG data URL
+   */
+  async capture() {
+    const canvas = this.wgpu.canvas;
+
+    // Flush the GPU queue so the frame is fully written before we read it.
+    await this.wgpu.device.queue.onSubmittedWorkDone();
+
+    const offscreen = document.createElement('canvas');
+    offscreen.width  = canvas.width;
+    offscreen.height = canvas.height;
+    offscreen.getContext('2d').drawImage(canvas, 0, 0);
+    return offscreen.toDataURL('image/png');
+  }
+
+  /**
+   * Repeatedly capture frames at a fixed interval, passing each PNG
+   * data URL to onFrame. Returns a stop() function.
+   *
+   * @param {number}   intervalMs  — use Renderer.FpsToMS(fps)
+   * @param {function(string): void} onFrame
+   * @returns {function(): void} stop
+   */
+  record(intervalMs = Renderer.FpsToMS(5), onFrame) {
+    let active   = true;
+    let lastTime = null;
+
+    const tick = (timestamp) => {
+      if (!active) return;
+
+      if (lastTime === null || timestamp - lastTime >= intervalMs) {
+        lastTime = timestamp;
+        this.capture().then(dataURL => {
+          if (active) onFrame(dataURL);
+        });
+      }
+
+      requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+    return () => { active = false; };
+  }
 }

@@ -1,186 +1,179 @@
-import { default as gulls } from 'https://cbcdn.githack.com/charlieroberts/gulls/raw/branch/main/gulls.js'
-import { default as Video } from 'https://cbcdn.githack.com/charlieroberts/gulls/raw/branch/main/helpers/video.js'
+import { default as gulls } from 'https://cbcdn.githack.com/charlieroberts/gulls/raw/branch/main/gulls.js';
 import UI from '../modules/ui.js';
 
 class App {
   async init(title) {
-    this.ui     = new UI().init();
-    this.sg     = await gulls.init(true);
-    this.frag   = await gulls.import('./frag.wgsl');
-    this.compute= await gulls.import('./compute.wgsl');
-    this.shader = gulls.constants.vertex + this.frag;
-    this.playing = false;
-
-    // create project title.
-    if (title) {
-      const titleEl = document.createElement('div');
-      titleEl.className = 'page-project-title';
-      titleEl.textContent = title;
-      document.body.appendChild(titleEl);
+    if (!navigator.gpu) {
+      document.getElementById('webgpu-error').style.display = 'flex';
+      return false;
     }
-    
-    this.initState();
+
+    this.ui = new UI().init();
+
+    this.sg = await gulls.init();
+    this.render_shader  = await gulls.import('./frag.wgsl');
+    this.compute_shader = await gulls.import('./compute.wgsl');
+
+    this.trail_length = 16;
+    this.frame  = this.sg.uniform(0);
+    this.res    = this.sg.uniform([this.sg.width, this.sg.height]);
+    this.spawn  = this.sg.uniform([0.0, 0.0, 0.0, 0.0]);
+
+    this.NUM_PARTICLES = 64;
+    this.STRIDE = 8 + this.trail_length * 2; // floats per particle in state1 buffer
+
+    // state1: STRIDE floats per particle
+    // [px, py, vx, vy, head, active, pad, pad, trailX0, trailY0, ...(TRAIL_LEN pairs)]
+    const state1 = new Float32Array(this.NUM_PARTICLES * this.STRIDE);
+    this.state1  = this.sg.buffer(state1);
+
+    // state2: [life, r, g, b] per particle
+    const state2 = new Float32Array(this.NUM_PARTICLES * 4);
+    this.state2  = this.sg.buffer(state2);
+
+    this.deathRate    = 2.0;
+    this.speed        = 1.9;
+    this.particleSize = 5.0;
+    this.frequencyMs  = 1200;
+    this.params       = this.sg.uniform([0.016, this.deathRate, this.speed, this.particleSize]);
+
+    this._seed = 0;
+    this._last = performance.now();
+
+    this._initInput();
+    this._initAutoFire();
+
+    return true;
   }
 
-  initState(gridInitType = 'center') {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const initState = new Float32Array(w * h * 2);
-
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const idx = (y * w + x) * 2;
-        initState[idx] = 1.0;
-        if (gridInitType === 'center') {
-          const dx = x - w / 2;
-          const dy = y - h / 2;
-          initState[idx + 1] = (Math.abs(dx) < 20 && Math.abs(dy) < 20) ? 1.0 : 0.0;
-
-        } else if (gridInitType === 'random') {
-          initState[idx + 1] = Math.random() < 0.05 ? 1.0 : 0.0;
-        }
-      }
-    }
-
-    this.currState = this.sg.buffer(initState);
-    this.nextState = this.sg.buffer(initState);
-    this.res = this.sg.uniform([w, h]);
-
-    // only initialize these once
-    if (!this.feed) {
-      this.feed = this.sg.uniform(.041);
-      this.kill = this.sg.uniform(.062);
-      this.dA   = this.sg.uniform(1.0);
-      this.dB   = this.sg.uniform(0.5);
-    }
+  _screenToClip(clientX, clientY) {
+    const canvas = document.querySelector('canvas.project-canvas') ?? document.querySelector('canvas');
+    const rect = canvas.getBoundingClientRect();
+    const nx   = ((clientX - rect.left) / rect.width)  *  2 - 1;
+    const ny   = ((clientY - rect.top)  / rect.height) * -2 + 1;
+    return [nx, ny];
   }
 
-  async restart() {
-    this.initState(this.initType ?? 'center');
-
-    this.computePass = await this.sg.compute({
-      shader: this.compute,
-      data: [this.res, this.feed, this.kill, this.dA, this.dB, this.sg.pingpong(this.currState, this.nextState)],
-      dispatchCount: [Math.round(gulls.width / 8), Math.round(gulls.height / 8), 1],
-      times: 25,
+  _initInput() {
+    const canvas = document.querySelector('canvas.project-canvas') ?? document.querySelector('canvas');
+    canvas.addEventListener('click', (e) => {
+      const [nx, ny] = this._screenToClip(e.clientX, e.clientY);
+      this._fireTo(nx, ny);
     });
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      const t = e.touches[0];
+      const [nx, ny] = this._screenToClip(t.clientX, t.clientY);
+      this._fireTo(nx, ny);
+    }, { passive: false });
+  }
 
-    this.renderPass = await this.sg.render({
-      shader: this.shader,
-      data: [this.res, this.sg.pingpong(this.currState, this.nextState)]
-    });
+  _initAutoFire() {
+    this._autoTimer = setInterval(() => {
+      const tx = -0.7 + Math.random() * 1.4;
+      const ty = -0.2 + Math.random() * 0.8;
+      this._fireTo(tx, ty);
+    }, this.frequencyMs);
+  }
 
-    // draw the initial state while paused
-    await this.sg.once(this.renderPass);
+  _setAutoFireFrequency(ms) {
+    this.frequencyMs = ms;
+    clearInterval(this._autoTimer);
+    this._initAutoFire();
+  }
+
+  _fireTo(tx, ty) {
+    this._seed++;
+    this.spawn.value = [tx, ty, 1.0, this._seed];
+    setTimeout(() => {
+      this.spawn.value = [tx, ty, 0.0, this._seed];
+    }, 32);
   }
 
   async run() {
-    this.computePass = await this.sg.compute({
-      shader: this.compute,
-      data: [this.res, this.feed, this.kill, this.dA, this.dB, this.sg.pingpong(this.currState, this.nextState)],
-      dispatchCount: [Math.round(gulls.width / 8), Math.round(gulls.height / 8), 1],
-      times: 25,
+    // Each particle renders TRAIL_LEN instances (lead + ghosts)
+    const instanceCount = this.NUM_PARTICLES * this.trail_length;
+
+    const render = await this.sg.render({
+      shader: this.render_shader,
+      data: [
+        this.frame,
+        this.res,
+        this.state1,
+        this.state2,
+        this.params,
+      ],
+      onframe: () => {
+        this.frame.value++;
+        const now = performance.now();
+        const dt  = Math.min((now - this._last) / 1000, 0.05);
+        this._last = now;
+        this.params.value = [dt, this.deathRate, this.speed, this.particleSize];
+      },
+      count: instanceCount,
+      blend: true,
     });
 
-    this.renderPass = await this.sg.render({
-      shader: this.shader,
-      data: [this.res, this.sg.pingpong(this.currState, this.nextState)]
+    // Dispatch enough workgroups to cover all particles.
+    // STRIDE > 4, so arrayLength(&state1)/STRIDE = NUM_PARTICLES.
+    // One thread per particle: ceil(64/8) = 8 in each dim.
+    const dc = Math.ceil(Math.sqrt(this.NUM_PARTICLES / 64)) + 1;
+
+    const compute = this.sg.compute({
+      shader: this.compute_shader,
+      data: [
+        this.res,
+        this.state1,
+        this.state2,
+        this.spawn,
+        this.params,
+      ],
+      dispatchCount: [dc, dc, 1],
     });
 
-    const frame = async () => {
-      if (this.playing) { await this.sg.once(this.computePass, this.renderPass); }
-      window.requestAnimationFrame(frame);
-    };
-    window.requestAnimationFrame(frame);
+    this.sg.run(compute, render);
   }
 }
 
-const presets = [
-  { feed: 0.055,  kill: 0.062,  dA: 1.0,  dB: 0.5,    initType: 'center' }, // Stripes/Coral
-  { feed: 0.018,  kill: 0.051,  dA: 1.0,  dB: 0.5,    initType: 'center' }, // Spirals/Worms
-  { feed: 0.0369, kill: 0.0642, dA: 1.12, dB: 0.3944, initType: 'random' }, // Inverse Bubbles
-  { feed: 0.046,  kill: 0.063,  dA: 1.0,  dB: 0.5,    initType: 'random' }, // Scattered Worms
-];
+export async function execute() {
+  const app = new App();
+  const ok  = await app.init('Fireworks');
+  if (!ok) throw new Error('WebGPU unavailable');
 
-const app = new App();
-await app.init('Reaction Diffusion');
-app.ui.parentPush({ id: 'app-params-menu', classOverrides: 'app-params-menu' });
-  // preset dropdown
-  app.ui.parentPush({ classOverrides: 'app-preset-dropdown' });
-    app.ui.text({ text: 'Presets:' });
-    app.ui.dropdown({ options: [
-      { name: 'Stripes/Coral',   value: 0 },
-      { name: 'Spirals/Worms',   value: 1 },
-      { name: 'Inverse Bubbles', value: 2 },
-      { name: 'Scattered Worms', value: 3 }],
-      cb: async (val) => {
-        const { feed, kill, dA, dB, initType } = presets[val];
-
-        app.initType = initType;
-        await app.restart();
-
-        app.feed.value = feed;
-        app.kill.value = kill;
-        app.dA.value = dA;
-        app.dB.value = dB;
-
-        const feedInput = document.querySelector('#slider-1-input');
-        const killInput = document.querySelector('#slider-2-input');
-        const dAInput   = document.querySelector('#slider-3-input');
-        const dBInput   = document.querySelector('#slider-4-input');
-        feedInput.value = feed;
-        killInput.value = kill;
-        dAInput.value   = dA;
-        dBInput.value   = dB;
-        feedInput.dispatchEvent(new Event('input'));
-        killInput.dispatchEvent(new Event('input'));
-        dAInput.dispatchEvent(new Event('input'));
-        dBInput.dispatchEvent(new Event('input'));
-
-        const initDropdown = document.querySelector('#dropdown-2');
-        if (initDropdown) initDropdown.value = initType;
-
-        app.playing = false;
-        playBtn.textContent = 'Start';
-      }
-    });
+  app.ui.parentPush({ id: 'app-project-title-root', classOverrides: 'app-project-title-root' });
+  app.ui.textbox({
+    text: 'Fireworks',
+    classOverrides: 'app-project-title',
+  });
   app.ui.parentPop();
-  // grid initialization type dropdown
-  app.ui.parentPush({ classOverrides: 'app-preset-dropdown' });
-    app.ui.text({ text: 'Init:' });
-    app.ui.dropdown({
-      options: [
-        { name: 'Center', value: 'center' },
-        { name: 'Random', value: 'random' },
-      ],
-      cb: async (val) => {
-        app.initType = val;
-        await app.restart();
-        app.playing = false;
-        playBtn.textContent = 'Start';
-      }
-    });
+
+  app.ui.parentPush({ id: 'app-params-menu', classOverrides: 'app-params-menu' });
+  app.ui.slider({
+    label: 'Trail Length',
+    range: { min: 0, max: 32, value: 16, step: 1, sigFigs: 3 },
+    cb: (val) => { app.trail_length = val; },
+  });
+  app.ui.slider({
+    label: 'Particle Size',
+    range: { min: 0.1, max: 5.0, value: 5.0, step: 0.1, sigFigs: 2 },
+    cb: (val) => { app.particleSize = Number(val); },
+  });
+  app.ui.slider({
+    label: 'Frequency',
+    range: { min: 200, max: 3000, value: 1200, step: 100, sigFigs: 4 },
+    cb: (val) => app._setAutoFireFrequency(Number(val)),
+  });
+  app.ui.slider({
+    label: 'Death Rate',
+    range: { min: 0.1, max: 3.0, value: 2.0, step: 0.05, sigFigs: 2 },
+    cb: (val) => { app.deathRate = Number(val); },
+  });
+  app.ui.slider({
+    label: 'Speed',
+    range: { min: 0.1, max: 3.0, value: 1.9, step: 0.05, sigFigs: 2 },
+    cb: (val) => { app.speed = Number(val); },
+  });
   app.ui.parentPop();
-  app.ui.slider({ label: 'Feed', range: { min: 0.01,  max: 0.08, value: .041, step: 0.0001, sigFigs: 5 }, cb: (val) => { app.feed.value = val; }});
-  app.ui.slider({ label: 'Kill', range: { min: 0.045, max: 0.07, value: .062, step: 0.0001, sigFigs: 5 }, cb: (val) => { app.kill.value = val; }});
-  app.ui.slider({ label: 'dA',   range: { min: 0.0,   max: 2.0,  value: 1.0,  step: 0.0001, sigFigs: 5 }, cb: (val) => { app.dA.value = val; }});
-  app.ui.slider({ label: 'dB',   range: { min: 0.0,   max: 2.0,  value: 0.5,  step: 0.0001, sigFigs: 5 }, cb: (val) => { app.dB.value = val; }});
-  app.ui.parentPush({ classOverrides: 'app-controls' });
-    const playBtn = app.ui.button({
-      label: 'Start',
-      cb: () => {
-        app.playing = !app.playing;
-        playBtn.textContent = app.playing ? 'Pause' : 'Start';
-      }
-    });
-    app.ui.button({
-      label: 'Reset',
-      cb: async () => {
-        await app.restart();
-        app.playing = false;
-        playBtn.textContent = 'Start';
-      }
-    });
-  app.ui.parentPop();
-app.ui.parentPop();
-await app.run();
+
+  await app.run();
+}

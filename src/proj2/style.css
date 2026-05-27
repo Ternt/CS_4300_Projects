@@ -74,22 +74,14 @@ a:hover {
   position: fixed;
   bottom: 0;
   right: 0;
+  color: white;
   background: rgba(0, 0, 0, 0.8);
   padding: 0.2rem 1rem;
-  color: white;
   font-family: 'Space Mono', monospace;
   font-size: 2rem;
   pointer-events: none;
   z-index: 3;
   box-sizing: border-box;
-}
-
-.page-notice {
-  z-index: 3;
-  top: var(--page-header-size);
-  color: rgba(255, 0, 0, 1.0);
-  font-family: 'Space Mono', monospace;
-  background: rgba(255, 0, 0, 0.3);
 }
 
 .content {
@@ -120,33 +112,12 @@ a:hover {
 
 .ui-toolbar {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .ui-element {
   display: block;
   margin-bottom: 0.5rem;
-}
-
-.ui-button {
-  width: fit-content;
-  height: fit-content;
-  font-family: 'Space Mono', monospace;
-  font-size: 0.875rem;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  padding: 0.2rem 0.6rem;
-  border: 0px solid rgba(0, 0, 0, 0);
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.ui-button:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.ui-button:focus {
-  outline: none;
 }
 
 .ui-dropdown {
@@ -182,8 +153,3 @@ a:hover {
   font-family: 'Space Mono', monospace;
 }
 
-.ui-button--disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  pointer-events: none;
-}
