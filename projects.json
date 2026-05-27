@@ -24,7 +24,7 @@
     "thumbnail":   "/thumbnails/proj3-thumbnail.png",
     "gif":         "/thumbnails/proj3-animation.webp",
     "glowColor":   null,
-    "description": ""
+    "description": "An experimentation with the Reaction Diffuse algorithm."
   },
   {
     "id":          "proj4",
@@ -33,7 +33,7 @@
     "thumbnail":   "/thumbnails/proj4-thumbnail.png",
     "gif":         "/thumbnails/proj4-animation.webp",
     "glowColor":   null,
-    "description": ""
+    "description": "A project simulating firework explosions."
   },
   {
     "id":          "proj5",
@@ -42,7 +42,7 @@
     "thumbnail":   "/thumbnails/proj5-thumbnail.png",
     "gif":         "/thumbnails/proj5-animation.webp",
     "glowColor":   null,
-    "description": ""
+    "description": "Small project experimenting with Virtual Ants (VANTS). The algorithm is in the same vein as The Game of Life."
   },
   {
     "id":          "projFinal",
@@ -51,6 +51,6 @@
     "thumbnail":   "/thumbnails/projFinal-thumbnail.png",
     "gif":         "/thumbnails/projFinal-animation.webp",
     "glowColor":   null,
-    "description": ""
+    "description": "My Final project for IMGD4300 implementing the Clustered Forward Rendering technique."
   }
 ]
