@@ -1,11 +1,12 @@
-The aesthetic goal was to simulate the look of a firecracker sparkle, particles that explode out from a point and fade as they arc downward 
-under gravity.
+For this project, I built a rule system where each vant type is defined by a makeVant() function that accepts an array of rule objects, 
+each specifying which pheromone value to react to, how much to turn, and what pheromone value to stamp onto the current cell 
+before moving on. Rules are evaluated in order and the first match wins, which means complex multi-state behaviours can be 
+composed by chaining rules. I had three presets: the classic Langton variant which turns right on empty cells and 
+left on marked ones, a reversed variant that does the opposite, and a symmetric variant that always turns a smaller increment 
+in the same direction, producing slower and more organic-looking trails. Second, I built a chunk system that groups three vants 
+into a cluster spawned near a shared center point, with each individual vant given a small positional offset and an independently 
+chosen ruleset and color.
 
-Particles stores its position, velocity, life, and color in two separate flat buffers. State1 holds the physics state plus a ring buffer 
-of N historical positions (N since this can be adjusted, default is 16), and state2 holds per-particle life and RGB color. Every compute 
-tick the particle's current position is stamped into the ring buffer before physics are applied, creating an equally-spaced breadcrumb trail 
-along the exact arc the particle traveled. The renderer then draws 64 × trail_length instances per frame, where each instance reads its position 
-from a specific slot in the ring buffer, the newest slot renders at full size and opacity, and each older slot fades and shrinks according to a 
-power curve, producing the ghost trail effect. Spawning is triggered by writing a clip-space coordinate and a trigger flag into a spawn uniform, 
-which the compute shader reads to reinitialize any dead particles outward from that point in an evenly-spread radial burst. Controls exposed to 
-the user include trail length, particle size, launch frequency, death rate, and speed.
+The behavioural goal behind the chunk system was the hope that placing different vant types in close proximity would cause their pheromone trails to interact. 
+By scattering four chunks across the screen in different configurations of the three vant types, I was aiming for situations where the patterns grown by each 
+cluster would eventually collide and interfere with each other, producing emergent structure that none of the individual vants could generate alone.

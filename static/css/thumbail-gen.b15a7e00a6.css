@@ -1,0 +1,162 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  color: #fff;
+  background: #000;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: Space Mono, monospace;
+  font-size: .8rem;
+  display: flex;
+}
+
+header {
+  border-bottom: 1px solid #ffffff1a;
+  align-items: center;
+  gap: 2rem;
+  padding: 1rem;
+  display: flex;
+}
+
+header h1 {
+  letter-spacing: .1em;
+  font-size: .9rem;
+  font-weight: 700;
+}
+
+#project-select {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .05em;
+  background: #ffffff14;
+  border: 1px solid #fff3;
+  padding: .3rem .6rem;
+  font-family: Space Mono, monospace;
+  font-size: .75rem;
+}
+
+#project-select option {
+  background: #111;
+}
+
+#run-btn {
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: .05em;
+  background: #ffffff14;
+  border: 1px solid #fff3;
+  padding: .3rem 1rem;
+  font-family: Space Mono, monospace;
+  font-size: .75rem;
+  transition: background .2s;
+}
+
+#run-btn:hover {
+  background: #ffffff26;
+}
+
+#run-btn:disabled {
+  opacity: .3;
+  cursor: not-allowed;
+}
+
+#status {
+  color: #fff6;
+  font-size: .7rem;
+}
+
+#log {
+  border-bottom: 1px solid #ffffff1a;
+  flex-direction: column;
+  flex: 1;
+  gap: .25rem;
+  max-height: 180px;
+  padding: 1rem;
+  display: flex;
+  overflow-y: auto;
+}
+
+.log-line {
+  color: #c8c8c8cc;
+}
+
+.log-line.ok {
+  color: #4caf50;
+}
+
+.log-line.err {
+  color: #f44336;
+}
+
+.log-line.info {
+  color: #64b5f6;
+}
+
+#stage {
+  background: #000;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+#project-frame {
+  opacity: 0;
+  border: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+
+#results {
+  background: #050505;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  display: flex;
+}
+
+.result-card {
+  flex-direction: column;
+  gap: .4rem;
+  width: 200px;
+  display: flex;
+}
+
+.result-card span {
+  color: #c8c8c899;
+  letter-spacing: .08em;
+  font-size: .65rem;
+}
+
+.result-card img {
+  border: 1px solid #ffffff1a;
+  width: 200px;
+  height: auto;
+  display: block;
+}
+
+.result-card a {
+  color: #64b5f6;
+  cursor: pointer;
+  letter-spacing: .05em;
+  font-size: .6rem;
+  text-decoration: underline;
+}
+
+#progress-bar-wrap {
+  background: #ffffff0d;
+  height: 2px;
+}
+
+#progress-bar {
+  background: #fff;
+  width: 0%;
+  height: 100%;
+  transition: width .1s linear;
+}
+

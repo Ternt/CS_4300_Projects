@@ -1,14 +1,15 @@
 :root {
   --page-header-size: 50px;
+  --page-layout-size: 1rem;
 }
 
 body {
-  overflow: hidden;
-  background: #000;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 * {
-  font-family: 'Space Mono', monospace;
+  font-family: 'Space Grotesk', sans-serif;
   padding: 0;
   margin: 0;
   box-sizing: border-box;
@@ -19,7 +20,37 @@ a {
   color: white;
 }
 
-a:hover { text-decoration: underline; }
+a:hover {
+  text-decoration: underline;
+}
+
+.space-mono-regular {
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.space-mono-bold {
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.space-mono-regular-italic {
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.space-mono-bold-italic {
+  font-family: "Space Mono", monospace;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.fixed {
+  position: fixed;
+}
 
 .page-header {
   width: 100vw;
@@ -27,17 +58,39 @@ a:hover { text-decoration: underline; }
   background: rgba(0, 0, 0, 0.6);
   padding: 1rem;
   z-index: 997;
-  position: fixed;
 }
 
 .page-main {
-  min-height: 100vh;
-  width: 100vw;
+  min-height: calc(100vh);
+  width: calc(100vw);
 }
 
 .page-content {
   position: relative;
   z-index: 1;
+}
+
+.page-project-title {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  color: white;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 0.2rem 1rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 2rem;
+  pointer-events: none;
+  z-index: 3;
+  box-sizing: border-box;
+}
+
+.content {
+  margin: auto;
+  max-width: 700px;
+}
+
+.github-link {
+  float: right;
 }
 
 .project-canvas {
@@ -128,37 +181,22 @@ a:hover { text-decoration: underline; }
   z-index: 1000;
 }
 
-.ui-link:hover {
-  color: purple;
-  text-decoration: underline;
+.app-params-menu {
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.6);
+  width: fit-content;
 }
 
-.app-project-title-root {
-  max-width: 34rem;
-  position: fixed;
-  bottom: 0;
-  right: 0;
+.app-preset-dropdown {
+  padding: 0.0rem 0.6rem;
+  display: flex;
+  flex-direction: row;
 }
 
-.app-project-title {
-  color: white;
-  background: rgba(0, 0, 0, 0.8);
-  padding: 0.2rem 1rem;
-  font-family: 'Space Mono', monospace;
-  font-size: 2rem;
-  pointer-events: none;
-  z-index: 3;
-  box-sizing: border-box;
-}
-
-.hint {
-  position: fixed;
-  bottom: 3.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  color: rgba(255, 255, 255, 0.4);
-  font-family: 'Space Mono', monospace;
-  font-size: 0.8rem;
-  pointer-events: none;
-  z-index: 3;
+.app-controls {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  padding: 0.2rem 0.6rem;
 }

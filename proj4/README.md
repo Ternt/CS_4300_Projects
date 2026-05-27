@@ -1,7 +1,11 @@
-In term's of technicality, I simply implemented the algorithm that was listed on the website, but added some parameters. 
-The two key parameters, feed and kill, control the rate. The simulation runs entirely on the GPU using a compute shader 
-dispatched in 8×8 workgroups, with a ping-pong buffer scheme so each frame reads from the previous state and writes to the next 
-without race conditions. The compute pass runs 25 times per frame to let the reaction evolve fast enough to be visible in real 
-time. For controls I exposed feed rate, kill rate, and the two diffusion coefficients dA and dB as sliders, along with a preset 
-dropdown that loads four hand-tuned parameter sets - Stripes/Coral, Spirals/Worms, Inverse Bubbles, and Scattered Worms - and 
-an initialization dropdown that seeds the grid either from a small centered square or from random sparse noise.
+The aesthetic goal was to simulate the look of a firecracker sparkle, particles that explode out from a point and fade as they arc downward 
+under gravity.
+
+Particles stores its position, velocity, life, and color in two separate flat buffers. State1 holds the physics state plus a ring buffer 
+of N historical positions (N since this can be adjusted, default is 16), and state2 holds per-particle life and RGB color. Every compute 
+tick the particle's current position is stamped into the ring buffer before physics are applied, creating an equally-spaced breadcrumb trail 
+along the exact arc the particle traveled. The renderer then draws 64 × trail_length instances per frame, where each instance reads its position 
+from a specific slot in the ring buffer, the newest slot renders at full size and opacity, and each older slot fades and shrinks according to a 
+power curve, producing the ghost trail effect. Spawning is triggered by writing a clip-space coordinate and a trigger flag into a spawn uniform, 
+which the compute shader reads to reinitialize any dead particles outward from that point in an evenly-spread radial burst. Controls exposed to 
+the user include trail length, particle size, launch frequency, death rate, and speed.

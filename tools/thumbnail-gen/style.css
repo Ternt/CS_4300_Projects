@@ -1,0 +1,134 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #000;
+  color: #fff;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+header h1 { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.1em; }
+
+#project-select {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+
+#project-select option { background: #111; }
+
+#run-btn {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 0.3rem 1rem;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: background 0.2s;
+}
+
+#run-btn:hover    { background: rgba(255,255,255,0.15); }
+#run-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+#status {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.7rem;
+}
+
+#log {
+  padding: 1rem;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  max-height: 180px;
+}
+
+.log-line      { color: rgba(200,200,200,0.8); }
+.log-line.ok   { color: #4caf50; }
+.log-line.err  { color: #f44336; }
+.log-line.info { color: #64b5f6; }
+
+#stage {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  background: #000;
+}
+
+#project-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  opacity: 0;
+}
+
+#results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  background: #050505;
+}
+
+.result-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: 200px;
+}
+
+.result-card span {
+  font-size: 0.65rem;
+  color: rgba(200,200,200,0.6);
+  letter-spacing: 0.08em;
+}
+
+.result-card img {
+  width: 200px;
+  height: auto;
+  border: 1px solid rgba(255,255,255,0.1);
+  display: block;
+}
+
+.result-card a {
+  font-size: 0.6rem;
+  color: #64b5f6;
+  text-decoration: underline;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+
+#progress-bar-wrap {
+  height: 2px;
+  background: rgba(255,255,255,0.05);
+}
+
+#progress-bar {
+  height: 100%;
+  background: #fff;
+  width: 0%;
+  transition: width 0.1s linear;
+}

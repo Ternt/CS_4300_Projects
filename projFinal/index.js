@@ -170,9 +170,6 @@ class App {
   }
 }
 
-const app = new App();
-await app.init();
-
 const DEBUG_MODES = [
   { name: 'None',          value: 0 },
   { name: 'Cluster Grid',  value: 1 },
@@ -180,53 +177,58 @@ const DEBUG_MODES = [
   { name: 'Z Slices',      value: 3 },
 ];
 
-app.ui.parentPush({ id: 'debug-menu', classOverrides: 'app-params-menu' });
-  app.ui.parentPush({ classOverrides: 'app-preset-dropdown' });
-    app.ui.text({ text: 'Debug:' });
-    app.ui.dropdown({
-      options: DEBUG_MODES,
-      cb: (val) => {
-        app.renderer.setDebugMode(parseInt(val));
-      }
-    });
-  app.ui.parentPop();
-app.ui.parentPop();
+export async function execute() {
+  const app = new App();
+  await app.init();
 
-app.ui.parentPush({ id: 'app-project-title-root', classOverrides: 'app-project-title-root' });
-  app.ui.textbox({
-    text: "Clustered Forward Renderer",
-    classOverrides: "app-project-title",
-  });
-  app.ui.parentPush({ id: 'app-credit-menu-root', classOverrides: 'app-credit-menu-root' });
-    app.ui.text({
-      text: "The models used were from\u00A0",
-      classOverrides: "app-credit",
-      inline: true,
-    });
-    app.ui.link({
-      text: "https://thisisbranden.itch.io/spaceship-modules",
-      href: "https://thisisbranden.itch.io/spaceship-modules",
-      classOverrides: "app-credit app-credit-link",
-    });
-    app.ui.text({
-      text: ", with slight modifications in blender.",
-      classOverrides: "app-credit",
-      inline: true,
-    });
+  app.ui.parentPush({ id: 'debug-menu', classOverrides: 'app-params-menu' });
+    app.ui.parentPush({ classOverrides: 'app-preset-dropdown' });
+      app.ui.text({ text: 'Debug:' });
+      app.ui.dropdown({
+        options: DEBUG_MODES,
+        cb: (val) => {
+          app.renderer.setDebugMode(parseInt(val));
+        }
+      });
+    app.ui.parentPop();
   app.ui.parentPop();
-app.ui.parentPop();
 
-const canvas = document.querySelector('canvas.project-canvas');
-const modelPath = canvas.dataset.model;
-if (modelPath) {
-  try {
-    const res  = await fetch(modelPath);
-    const blob = await res.blob();
-    const file = new File([blob], modelPath.split('/').pop());
-    await app.loadModel(file);
-  } catch (e) {
-    console.error('Failed to load model:', e);
+  app.ui.parentPush({ id: 'app-project-title-root', classOverrides: 'app-project-title-root' });
+    app.ui.textbox({
+      text: "Clustered Forward Renderer",
+      classOverrides: "app-project-title",
+    });
+    app.ui.parentPush({ id: 'app-credit-menu-root', classOverrides: 'app-credit-menu-root' });
+      app.ui.text({
+        text: "The models used were from\u00A0",
+        classOverrides: "app-credit",
+        inline: true,
+      });
+      app.ui.link({
+        text: "https://thisisbranden.itch.io/spaceship-modules",
+        href: "https://thisisbranden.itch.io/spaceship-modules",
+        classOverrides: "app-credit app-credit-link",
+      });
+      app.ui.text({
+        text: ", with slight modifications in blender.",
+        classOverrides: "app-credit",
+        inline: true,
+      });
+    app.ui.parentPop();
+  app.ui.parentPop();
+
+  const canvas = document.querySelector('canvas.project-canvas');
+  const modelPath = canvas.dataset.model;
+  if (modelPath) {
+    try {
+      const res  = await fetch(modelPath);
+      const blob = await res.blob();
+      const file = new File([blob], modelPath.split('/').pop());
+      await app.loadModel(file);
+    } catch (e) {
+      console.error('Failed to load model:', e);
+    }
   }
-}
 
-app.run();
+  app.run();
+}

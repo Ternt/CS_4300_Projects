@@ -74,14 +74,22 @@ a:hover {
   position: fixed;
   bottom: 0;
   right: 0;
-  color: white;
   background: rgba(0, 0, 0, 0.8);
   padding: 0.2rem 1rem;
+  color: white;
   font-family: 'Space Mono', monospace;
   font-size: 2rem;
   pointer-events: none;
   z-index: 3;
   box-sizing: border-box;
+}
+
+.page-notice {
+  z-index: 3;
+  top: var(--page-header-size);
+  color: rgba(255, 0, 0, 1.0);
+  font-family: 'Space Mono', monospace;
+  background: rgba(255, 0, 0, 0.3);
 }
 
 .content {
@@ -110,17 +118,35 @@ a:hover {
   pointer-events: auto;
 }
 
+.ui-toolbar {
+  display: flex;
+  flex-direction: column;
+}
+
 .ui-element {
   display: block;
   margin-bottom: 0.5rem;
 }
 
-.ui-text {
-  color: white;
+.ui-button {
+  width: fit-content;
+  height: fit-content;
   font-family: 'Space Mono', monospace;
   font-size: 0.875rem;
-  display: flex;
-  align-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border: 0px solid rgba(0, 0, 0, 0);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.ui-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.ui-button:focus {
+  outline: none;
 }
 
 .ui-dropdown {
@@ -128,8 +154,8 @@ a:hover {
   height: fit-content;
   font-family: 'Space Mono', monospace;
   font-size: 0.875rem;
+  background: rgba(0, 0, 0, 0.6);
   color: white;
-  background: inherit;
   padding: 0.2rem 0.6rem;
   border: 0px solid rgba(0, 0, 0, 0);
   cursor: pointer;
@@ -156,47 +182,8 @@ a:hover {
   font-family: 'Space Mono', monospace;
 }
 
-.ui-slider {
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  color: white;
-  padding: 0.2rem 0.6rem;
-  font-family: 'Space Mono', monospace;
-  font-size: 0.875rem;
-}
-
-.ui-slider-value {
-  margin-left: auto;
-}
-
-.ui-slider-inline-input {
-  width: 4rem;
-  margin-left: auto;
-}
-
-.ui-slider-popup-input {
-  position: fixed;
-  width: 5rem;
-  z-index: 1000;
-}
-
-.app-params-menu {
-  display: flex;
-  flex-direction: column;
-  background: rgba(0, 0, 0, 0.6);
-  width: fit-content;
-}
-
-.app-preset-dropdown {
-  padding: 0.0rem 0.6rem;
-  display: flex;
-  flex-direction: row;
-}
-
-.app-controls {
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  padding: 0.2rem 0.6rem;
+.ui-button--disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
 }

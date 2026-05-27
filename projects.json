@@ -1,0 +1,56 @@
+[
+  {
+    "id":          "proj1",
+    "name":        "IMGD4300 Project 1",
+    "url":         "/proj1/index.html",
+    "thumbnail":   "/thumbnails/proj1-thumbnail.png",
+    "gif":         "/thumbnails/proj1-animation.webp",
+    "glowColor":   null,
+    "description": "A short animation based on the music video, Dorian Concept - 'Hide (CS01 version)'."
+  },
+  {
+    "id":          "proj2",
+    "name":        "IMGD4300 Project 2",
+    "url":         "/proj2/index.html",
+    "thumbnail":   "/thumbnails/proj2-thumbnail.png",
+    "gif":         "/thumbnails/proj2-animation.webp",
+    "glowColor":   null,
+    "description": "A project exploring how convolution is used to create edge detection algorithms."
+  },
+  {
+    "id":          "proj3",
+    "name":        "IMGD4300 Project 3",
+    "url":         "/proj3/index.html",
+    "thumbnail":   "/thumbnails/proj3-thumbnail.png",
+    "gif":         "/thumbnails/proj3-animation.webp",
+    "glowColor":   null,
+    "description": ""
+  },
+  {
+    "id":          "proj4",
+    "name":        "IMGD4300 Project 4",
+    "url":         "/proj4/index.html",
+    "thumbnail":   "/thumbnails/proj4-thumbnail.png",
+    "gif":         "/thumbnails/proj4-animation.webp",
+    "glowColor":   null,
+    "description": ""
+  },
+  {
+    "id":          "proj5",
+    "name":        "IMGD4300 Project 5",
+    "url":         "/proj5/index.html",
+    "thumbnail":   "/thumbnails/proj5-thumbnail.png",
+    "gif":         "/thumbnails/proj5-animation.webp",
+    "glowColor":   null,
+    "description": ""
+  },
+  {
+    "id":          "projFinal",
+    "name":        "IMGD4300 Final Project",
+    "url":         "/projFinal/index.html",
+    "thumbnail":   "/thumbnails/projFinal-thumbnail.png",
+    "gif":         "/thumbnails/projFinal-animation.webp",
+    "glowColor":   null,
+    "description": ""
+  }
+]

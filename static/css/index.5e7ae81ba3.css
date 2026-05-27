@@ -1,0 +1,251 @@
+:root {
+  --page-header-size: 50px;
+  --page-layout-size: 1rem;
+  --card-w: 560px;
+  --card-h: 315px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Space Mono, monospace;
+}
+
+a {
+  color: #fff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+body {
+  color: #fff;
+  background: #000;
+  overflow-x: hidden;
+}
+
+.space-mono-regular {
+  font-family: Space Mono, monospace;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.space-mono-bold {
+  font-family: Space Mono, monospace;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.space-mono-regular-italic {
+  font-family: Space Mono, monospace;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.space-mono-bold-italic {
+  font-family: Space Mono, monospace;
+  font-style: italic;
+  font-weight: 700;
+}
+
+.page-header {
+  width: 100vw;
+  height: var(--page-header-size);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 997;
+  line-height: var(--page-header-size);
+  background: #0009;
+  padding: 0 1rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.header-name {
+  color: #fff;
+  letter-spacing: .05em;
+  font-family: Space Mono, monospace;
+  font-size: 1.5rem;
+}
+
+.page-title {
+  color: #fff;
+  letter-spacing: .05em;
+  float: right;
+  font-family: Space Mono, monospace;
+  font-size: 1.5rem;
+}
+
+.page-main {
+  padding-top: var(--page-header-size);
+  width: 100vw;
+  min-height: 100vh;
+}
+
+.page-content {
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 4rem 0 6rem;
+  display: flex;
+  position: relative;
+}
+
+.project-row {
+  width: var(--card-w);
+  margin-bottom: 5rem;
+  position: relative;
+}
+
+.project-label {
+  left: calc(var(--card-w) + 2rem);
+  pointer-events: none;
+  opacity: 0;
+  width: 220px;
+  transition: opacity .2s;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.project-label.visible {
+  opacity: 1;
+}
+
+.project-label-title {
+  color: #fff;
+  white-space: nowrap;
+  margin-bottom: .5rem;
+  font-family: Space Mono, monospace;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.project-label-description {
+  color: #b4b4b4;
+  white-space: normal;
+  font-family: Space Mono, monospace;
+  font-size: .7rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.project-card {
+  width: var(--card-w);
+  height: var(--card-h);
+  cursor: pointer;
+  display: block;
+  position: relative;
+}
+
+.card-glow {
+  z-index: 0;
+  background: var(--glow-color, #ffffff14);
+  filter: blur(32px);
+  opacity: 0;
+  pointer-events: none;
+  border-radius: 2px;
+  transition: opacity .45s;
+  position: absolute;
+  inset: -20px;
+}
+
+.project-card:hover .card-glow {
+  opacity: 1;
+}
+
+.card-screen {
+  z-index: 1;
+  background: #0a0a0a;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.card-screen:before, .card-screen:after {
+  content: "";
+  z-index: 3;
+  pointer-events: none;
+  background: #000;
+  height: 10%;
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.card-screen:before {
+  top: 0;
+}
+
+.card-screen:after {
+  bottom: 0;
+}
+
+.card-thumbnail, .card-thumbnail-gif {
+  object-fit: cover;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+
+.card-thumbnail-gif {
+  z-index: 2;
+  opacity: 0;
+  transition: opacity .3s;
+}
+
+.project-card:hover .card-thumbnail-gif {
+  opacity: 1;
+}
+
+.card-placeholder {
+  z-index: 1;
+  background: repeating-linear-gradient(-45deg, #0a0a0a 0 4px, #111 4px 8px);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  position: absolute;
+  inset: 0;
+}
+
+.card-placeholder-text {
+  color: #a0a0a0;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  font-family: Space Mono, monospace;
+  font-size: 1rem;
+}
+
+.card-scanlines {
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  background: repeating-linear-gradient(#0000 0 3px, #00000012 3px 4px);
+  transition: opacity .35s;
+  position: absolute;
+  inset: 0;
+}
+
+.project-card:hover .card-scanlines {
+  opacity: 1;
+}
+
+.card-screen-border {
+  z-index: 5;
+  pointer-events: none;
+  border: 1px solid #505050;
+  transition: border-color .3s;
+  position: absolute;
+  inset: 0;
+}
+
+.project-card:hover .card-screen-border {
+  border-color: #969696;
+}
+
