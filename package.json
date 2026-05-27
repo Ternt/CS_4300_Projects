@@ -4,12 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "rsbuild dev",
-    "build": "rsbuild build",
-    "preview": "rsbuild preview"
+    "dev": "cross-env PROGRAM=website rsbuild dev",
+    "build": "cross-env PROGRAM=website rsbuild build",
+    "preview": "rsbuild preview",
+    "dev:thumbgen": "cross-env PROGRAM=thumbgen rsbuild dev",
+    "build:thumbgen": "cross-env PROGRAM=thumbgen rsbuild build"
   },
   "devDependencies": {
-    "@rsbuild/core": "^2.0.0"
+    "@rsbuild/core": "^2.0.0",
+    "cross-env": "^10.1.0"
   },
   "dependencies": {
     "fbx-parser": "^2.1.3"
