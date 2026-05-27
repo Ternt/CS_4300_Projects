@@ -1,11 +1,10 @@
 import { defineConfig } from '@rsbuild/core';
-import { existsSync }   from 'fs';
 
 export default defineConfig({
 
   html: {
     template({ entryName }) {
-      if (entryName === 'index')    return './src/index.html';
+      if (entryName === 'index')        return './src/index.html';
       if (entryName === 'thumbail-gen') return './src/tools/thumbnail-gen/index.html';
       return `./src/${entryName}/index.html`;
     },
@@ -13,7 +12,7 @@ export default defineConfig({
   },
   source: {
     entry: {
-      "index": './src/index.js',
+      "index":        './src/index.js',
       "thumbail-gen": './src/tools/thumbnail-gen/index.js',
     },
   },
@@ -23,9 +22,7 @@ export default defineConfig({
       root: 'public',
     },
     copy: [
-      ...(existsSync('./public/thumbnails')
-        ? [{ from: 'public/thumbnails', to: 'thumbnails' }]
-        : []),
+      { from: 'public/thumbnails', to: 'thumbnails', noErrorOnMissing: true },
       { from: 'src/projects.json', to: 'projects.json' },
     ],
   },
@@ -34,4 +31,3 @@ export default defineConfig({
     historyApiFallback: false,
   },
 });
-
